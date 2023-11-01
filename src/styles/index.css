@@ -1,12 +1,20 @@
+body {
+    background-color: black;
+    background-image: url("https://images.unsplash.com/photo-1520034475321-cbe63696469a?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  }
 
-/* 
-
-    You can write your own styles here...
-    
-    
-    ...Or you can use the import command to include 
-    other sylesheets into your bunde as well, e.j:
-    
-    import 'relative/path/to/stylesheet.scss';
-
-*/
+  .clock-icon, .seconds{
+    width: 150px;
+    height: 200px;
+    background-color: #0E0E0E;
+    color: white;
+    font-size: 100px;
+    font-weight: 800;
+    font-family: 'Times New Roman', Times, serif;
+    border: 1px solid none;
+    border-radius: 8px;
+    box-shadow: 2px 2px 2px 1px lightslategray;
+    margin:5px;
+    padding-top: 30px;
+   
+  }

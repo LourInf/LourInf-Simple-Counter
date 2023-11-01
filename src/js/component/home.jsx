@@ -1,24 +1,40 @@
-import React from "react";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+import React, { useState, useEffect } from "react";
+import Counter from "./counter.jsx";
 
-//create your first component
 const Home = () => {
+	//inside Home function we apply the useState hook to manage the counter variable and its update function
+	const[counter,setCounter] = useState(0); //initialized at 0 seconds
+
+	 // useEffect hook to run code after each render, simulating component lifecycle
+	useEffect(() => {
+	 // setInterval to update the counter every second
+		const interval = setInterval(() => {
+			//component mounting: using the setCounter function to increment the counter
+			setCounter(counter => counter +1)
+		},1000) 
+		//component unmount:cleanup function to clear the interval when the component unmounts
+		return () => clearInterval(interval)
+	}, [counter]) // Dependency array to specify when the effect should run
+
+	 // function to extract individual digits from the counter
+	function calculateSeconds(aCounter,placeValue){
+		return Math.floor(aCounter/placeValue) % 10
+	}
+
+// rendering the Home component
 	return (
 		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
+			<>
+			{/* Render the Counter component with digit props */}
+			<Counter thousandsDigit= {calculateSeconds(counter, 1000)}
+			hundredsDigit= {calculateSeconds(counter,100)}
+			tensDigit= {calculateSeconds(counter,10)}
+			onesDigit= {calculateSeconds(counter,1)}
+			/>
+			{counter} {/* {counter} dynamically displays the current value of the counter variable. */}
+			</>
+
 		</div>
 	);
 };
