@@ -1,42 +1,89 @@
-# Hello World with React boilerplate
+# Simple Counter using React JS
 
-Start coding a react application
+![image](https://github.com/LourInf/LourInf-Simple-Counter/assets/117685514/934fe51d-3baa-4f55-839d-47b33003af96)
 
-> If you are working locally instead of using codespaces or gitpod, please follow [local installation steps](#local-installation-skip-if-you-are-working-on-codespaces-or-gitpod) and come back to this part of the readme.
+## Main learnings:
 
-## How to start coding?
+1. **useState hook**:
 
-- Install the packages with `$ npm install`.
-- Run the webpack server with `$ npm run start`
+        const [counter, setCounter] = useState(0);
+- Great for monitoring various counts, such as the amount of text written, remaining work, or the number of clicks. In this project, it serves as a container for tracking and updating our counter, functioning like a compact memory space.
+- It returns an array with 2 elements:
+    - The first element is a variable which holds the current state value ("counter"), responsible for storing and representing the current state of the counter.
+    - Second element is a function ("setCounter") that facilitates the updating of the "counter" state, allowing us to modify the counter value as needed.
+- Since our counter is a number, we initialize the counter state to 0seconds.
+- When we want to update the state, we call the function returned by useState with the new value. React then re-renders the component with the updated state:
 
-You can update the `styles/index.css` or `js/index.js` depending on your needs.
-Add more files into your, `./src/js/components` or styles folder as you need them.
+            setCounter(counter + 1);
 
-## Local Installation (skip if you are working on codespaces or gitpod)
+2. **setInterval**:
 
-Download the boilerplate using git
+       setInterval(callback, delay, param1, param2, ...);
+- It's a built-in JavaScript function that is used to repeatedly execute a provided function at specified intervals. It's commonly used for tasks that require periodic execution, such as animations, timers, or any situation where you want to perform an action at regular intervals.
+- Breaking down the function:
+    - callback: The function to be executed at each interval.
+    - delay: The time, in milliseconds, between each execution of the function.
+    - param1, param2, ...: (Optional) Additional parameters to pass to the callback function.
+    - Return Value: setInterval returns a numeric ID that uniquely identifies the interval. This ID can be used to later clear or cancel the interval.
+- Clearing the Interval: To stop the interval and prevent further executions, you can use the clearInterval function, passing the interval ID as an argument.
 
-```
-$ git clone https://github.com/4GeeksAcademy/react-hello.git
-$ cd react-hello
-```
+        clearInterval(interval);
+   
+4. **useEffect hook**:
 
-## Publish your website!
+              useEffect(() => {
+                  const interval = setInterval(() => {
+                    setCounter(counter => counter + 1);
+                  }, 1000);
+                
+                  return () => clearInterval(interval);
+                }, [counter]);
 
-This boilerplate is 100% compatible with the free [github pages](https://pages.github.com/) and [vercel](https://vercel.com/) hosting.
+- Used to perform side effects in functional components. It's typically employed for tasks that happen after the component renders.
+- Here it sets up and initiatize the timer (using setInterval) for updating (in this case, we want to increment) the counter every second, and to clean up the timer with clearInterval.
+- Effects and Lifecycle Simulation with useEffect:
+    - The useEffect hook is used to simulate lifecycle methods. It runs code after each render.
+    - setInterval is employed inside useEffect to increment the counter every second, mimicking a timer.
+- Dependency Array([...]): The useEffect hook has a dependency array [counter], specifying that the effect should run whenever the counter state changes. This prevents memory leaks and ensures proper cleanup.
+- Cleanup Function (return statement): This function runs when the component is unmounted or when the "counter" variable changes (due to the dependency array [counter]).The cleanup function uses clearInterval(interval) to stop the interval to prevent any ongoing executions after being no longer in use.
 
-It takes just 2 minutes to deploy, [click here to start the process](https://github.com/4GeeksAcademy/react-hello/blob/master/docs/DEPLOY.md).
+           return () => clearInterval(interval)
 
-## Other features
 
-- Automatic Code Formatting: Use of [Prettier](https://prettier.io/) for automatic code indentation and formatting.
-- Error reporting: Use of [eslint](https://eslint.org/) for better error reporting.
-- Hot Deploy: Use of [Webpack Development Server](https://webpack.js.org/configuration/dev-server/) for hot deploy and live reload.
-- One-command publish of the code to github pages with `npm run deploy:github`.
-- Babel 7 (really fast).
+3. The "calculateSeconds" function is created for the props in order to extract individual digits from the counter:
+   
+         function calculateSeconds(aCounter, placeValue) {
+            return Math.floor(aCounter / placeValue) % 10;
+           }
+   
+- We pass two parameters: "aCounter" and "placeValue":
+    - aCounter: This is the counter value from which we want to extract digits.
+    - placeValue: This represents the place value of the digit we want to extract (e.g., ones, tens, hundreds, thousands).
+    - Mathematical Operation:
+        - "Math.floor(aCounter / placeValue)": This division calculates how many times the placeValue fits into aCounter. For example, if placeValue is 100 and aCounter is 456, the result of this division would be 4.
+        - "% 10": The modulus operation (%) is used to get the remainder after the division by 10. This operation effectively extracts the last digit of the result obtained from the division.
+        - Return Value: The final result is the last digit of the division, representing the digit at the specified place value.
+      
+  
+4. Props:
+- Used to pass data from a parent component ("Home") to a child component ("Counter"). The Counter component receives individual digit props (thousandsDigit, hundredsDigit, tensDigit, and onesDigit).
+- The props are calculated by calling the "calculateSeconds" function with two arguments: the current value of the counter, and the digit at the 1, 10, 100 and 1000 place of the counter, so we are able to break down the "counter" into its individual digits and pass them as props to the "Counter" component:
 
-### Contributors
-
-This template was built as part of the 4Geeks Academy [Coding Bootcamp](https://4geeksacademy.com/us/coding-bootcamp) by [Alejandro Sanchez](https://twitter.com/alesanchezr) and many other contributors. Find out more about our [Full Stack Developer Course](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), and [Data Science Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning).
-
-You can find other templates and resources like this at the [school github page](https://github.com/4geeksacademy/).
+        // rendering the Home component
+         	return (
+      	  	<div className="text-center">
+      			<>
+      			{/* Render the Counter component with digit props */}
+      			<Counter thousandsDigit= {calculateSeconds(counter, 1000)}
+      			hundredsDigit= {calculateSeconds(counter,100)}
+      			tensDigit= {calculateSeconds(counter,10)}
+      			onesDigit= {calculateSeconds(counter,1)}
+      			/>
+      			{counter} {/* dynamically displays the current value of the counter variable. */}
+      			</>
+      		</div>
+          );
+      
+- So the props are set to the result of the "calculateSeconds" function where:
+    - "aCounter" becomes "counter" (the current value of the counter variable).
+    - "placeValue" becomes 1, 10, 100, and 1000 argument. 
