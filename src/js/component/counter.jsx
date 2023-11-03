@@ -4,7 +4,6 @@ import React from "react";
 
 //create component, taking props as parameters.
 function Counter (props){
-
     return(
         <>
             <div className="container d-flex mt-5 justify-content-center align-items-center">
