@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import Counter from "./counter.jsx";
+import Countdown from "./countdown.jsx";
 
 const Home = () => {
 	//inside Home function we apply the useState hook to manage the counter variable and its update function
@@ -33,6 +34,8 @@ const Home = () => {
 			onesDigit= {calculateSeconds(counter,1)}
 			/>
 			{counter} {/* {counter} dynamically displays the current value of the counter variable. */}
+
+			<Countdown />
 			</>
 
 		</div>

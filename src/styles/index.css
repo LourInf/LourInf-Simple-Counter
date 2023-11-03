@@ -18,3 +18,22 @@ body {
     padding-top: 30px;
    
   }
+
+  .countdown{
+    width: 250px;
+    background-color: #0E0E0E;
+    color: white;
+    font-size: 100px;
+    font-weight: 800;
+    font-family: 'Times New Roman', Times, serif;
+    border: 1px solid none;
+    border-radius: 8px;
+    box-shadow: 2px 2px 2px 1px lightslategray;
+
+  }
+
+  .icon-sandclock{
+    font-size: 50px;
+    color: white;
+    margin: 0px 30px 60px 0px;
+  }
