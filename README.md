@@ -1,21 +1,23 @@
 # Simple Counter using React JS
 
-![image](https://github.com/LourInf/LourInf-Simple-Counter/assets/117685514/934fe51d-3baa-4f55-839d-47b33003af96)
+![image](https://github.com/LourInf/LourInf-Simple-Counter/assets/117685514/2049aa7e-d33f-43e0-8d7a-08172bf2978b)
+
 
 ## Main learnings:
 
 1. **useState hook**:
 
         const [counter, setCounter] = useState(0);
-- Great for monitoring various counts, such as the amount of text written, remaining work, or the number of clicks. In this project, it serves as a container for tracking and updating our counter, functioning like a compact memory space.
-- It returns an array with 2 elements:
-    - The first element is a variable which holds the current state value ("counter"), responsible for storing and representing the current state of the counter.
-    - Second element is a function ("setCounter") that facilitates the updating of the "counter" state, allowing us to modify the counter value as needed.
-- Since our counter is a number, we initialize the counter state to 0seconds.
+        const [isActive, setIsActive] = useState(false);
+- Destructuring Assignment: _const [counter, setCounter] = useState(0)_: Uses destructuring assignment to create a state variable named counter and a function named setCounter to update it. Similarly, _const [isActive, setIsActive] = useState(false)_ creates a state variable named isActive and a function named setIsActive. So we have 2 parts:
+    - the state Variable: in this project, "counter" holds the state for counting seconds. It is initialized at 0. Similarly, "isActive" represents the state for tracking whether a component is active or not (e.g., whether the timer is running). It is initialized as false.
+    - the function to update the state: "setCounter" allows us to update the value of the "counter" state variable. Similarly, "setIsActive" allows us to update the value of the "isActive" state variable.
 - When we want to update the state, we call the function returned by useState with the new value. React then re-renders the component with the updated state:
 
-            setCounter(counter + 1);
+        setCounter(counter => counter + 1)
 
+    - Note: Because state updates are asynchronous, we need to ensure that the correct latest state is used. We can do that by using the functional form of "setCounter" so React guarantees that it will provide the latest state value as an argument to the function. If we would use _setCounter(counter + 1)_ the counter might be incremented just once.
+      
 2. **setInterval**:
 
        setInterval(callback, delay, param1, param2, ...);
@@ -31,30 +33,28 @@
    
 4. **useEffect hook**:
 
-              useEffect(() => {
-                  const interval = setInterval(() => {
-                    setCounter(counter => counter + 1);
-                  }, 1000);
-                
-                  return () => clearInterval(interval);
-                }, [counter]);
+       useEffect(() => {
+	   const interval = isActive ? setInterval(() => setCounter(counter => counter + 1), 1000) : null;
+	   return () => clearInterval(interval);
+       }, [isActive]);
 
 - Used to perform side effects in functional components. It's typically employed for tasks that happen after the component renders.
 - Here it sets up and initiatize the timer (using setInterval) for updating (in this case, we want to increment) the counter every second, and to clean up the timer with clearInterval.
 - Effects and Lifecycle Simulation with useEffect:
-    - The useEffect hook is used to simulate lifecycle methods. It runs code after each render.
-    - setInterval is employed inside useEffect to increment the counter every second, mimicking a timer.
-- Dependency Array([...]): The useEffect hook has a dependency array [counter], specifying that the effect should run whenever the counter state changes. This prevents memory leaks and ensures proper cleanup.
-- Cleanup Function (return statement): This function runs when the component is unmounted or when the "counter" variable changes (due to the dependency array [counter]).The cleanup function uses clearInterval(interval) to stop the interval to prevent any ongoing executions after being no longer in use.
+    - useEffect simulates lifecycle methods by running code after each render.
+    - In this case, setInterval inside useEffect mimics a timer, incrementing the counter every second when isActive is true.
+- Dependency Array([ ]): The useEffect hook has a dependency array [isActive], specifying that the effect should run whenever the "isActive" state changes. This prevents memory leaks and ensures proper cleanup.
+- If isActive is true, the timer is set up with setInterval to increment the counter every second. If isActive is false, the timer is set to null, pausing the countdown.
+- Cleanup Function (return statement): runs when the component is unmounted or when the "isActive" state changes (due to the dependency array [isActive]).The cleanup function uses clearInterval(interval) to stop the interval to prevent any ongoing executions after being no longer in use.
 
-           return () => clearInterval(interval)
+       return () => clearInterval(interval)
 
 
 3. The "calculateSeconds" function is created for the props in order to extract individual digits from the counter:
    
-         function calculateSeconds(aCounter, placeValue) {
-            return Math.floor(aCounter / placeValue) % 10;
-           }
+       function calculateSeconds(aCounter, placeValue) {
+         return Math.floor(aCounter / placeValue) % 10;
+          }
    
 - We pass two parameters: "aCounter" and "placeValue":
     - aCounter: This is the counter value from which we want to extract digits.
@@ -69,21 +69,45 @@
 - Used to pass data from a parent component ("Home") to a child component ("Counter"). The Counter component receives individual digit props (thousandsDigit, hundredsDigit, tensDigit, and onesDigit).
 - The props are calculated by calling the "calculateSeconds" function with two arguments: the current value of the counter, and the digit at the 1, 10, 100 and 1000 place of the counter, so we are able to break down the "counter" into its individual digits and pass them as props to the "Counter" component:
 
-        // rendering the Home component
-         	return (
-      	  	<div className="text-center">
-      			<>
-      			{/* Render the Counter component with digit props */}
-      			<Counter thousandsDigit= {calculateSeconds(counter, 1000)}
-      			hundredsDigit= {calculateSeconds(counter,100)}
-      			tensDigit= {calculateSeconds(counter,10)}
-      			onesDigit= {calculateSeconds(counter,1)}
-      			/>
-      			{counter} {/* dynamically displays the current value of the counter variable. */}
-      			</>
-      		</div>
+        //rendering the Home component
+          return (
+            <div className="text-center">
+      		{/* Render the Counter component with digit props */}
+      		<Counter thousandsDigit= {calculateSeconds(counter, 1000)}
+      		hundredsDigit= {calculateSeconds(counter,100)}
+      		tensDigit= {calculateSeconds(counter,10)}
+      		onesDigit= {calculateSeconds(counter,1)}
+             />
+            </div>
           );
       
 - So the props are set to the result of the "calculateSeconds" function where:
     - "aCounter" becomes "counter" (the current value of the counter variable).
     - "placeValue" becomes 1, 10, 100, and 1000 argument. 
+
+5. Button component and button Handlers:
+- The Buttons component receives props (handleMain, handleReset, and isActive) to control button behavior. Buttons' text is conditionally rendered based on the "isActive" state (the "Start/Pause" button dynamically changes its text based on the isActive state). And the click events on these buttons trigger the associated functions (handleMain and handleReset) passed as props:
+
+          const Buttons = ({ handleMain, handleReset, isActive }) => {
+          return (
+            <div className="btn-group-vertical bt-group sm" role="group">
+              <button type="button" className="btn btn-outline-success btn-lg m-2 p-3 fw-bold" onClick={handleMain}>
+                {isActive ? "Pause" : "Start"}
+              </button>
+              <button type="button" className="btn btn-outline-danger btn-lg m-2 p-3 fw-bold" onClick={handleReset}>
+                {"Reset"}
+              </button>
+            </div>
+          );
+        };
+
+- "handleMain" toggles the value of the "isActive" state, simulating the start/pause functionality, while "handleReset" resets the counter to zero and sets the "isActive" state to false, simulating a reset functionality:
+
+          const handleMain = () =>{
+                setIsActive(!isActive); // Toggle between true and false
+        
+        	};
+          const handleReset =() => {
+                setCounter(0)
+        	setIsActive(false);
+        	};
